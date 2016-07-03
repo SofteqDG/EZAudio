@@ -269,6 +269,8 @@ NSString * const EZAudioPlayerDidSeekNotification = @"EZAudioPlayerDidSeekNotifi
 - (void)setAudioFile:(EZAudioFile *)audioFile
 {
     _audioFile = [audioFile copy];
+    if (!_audioFile) return;
+    
     _audioFile.delegate = self;
     AudioStreamBasicDescription inputFormat = _audioFile.clientFormat;
     [self.output setInputFormat:inputFormat];
@@ -280,6 +282,9 @@ NSString * const EZAudioPlayerDidSeekNotification = @"EZAudioPlayerDidSeekNotifi
 
 - (void)setCurrentTime:(NSTimeInterval)currentTime
 {
+    if (!self.audioFile) {
+        return;
+    }
     [self.audioFile setCurrentTime:currentTime];
     [[NSNotificationCenter defaultCenter] postNotificationName:EZAudioPlayerDidSeekNotification
                                                         object:self];
@@ -325,6 +330,9 @@ NSString * const EZAudioPlayerDidSeekNotification = @"EZAudioPlayerDidSeekNotifi
 
 - (void)play
 {
+    if (!self.audioFile) {
+        return;
+    }
     [self.output startPlayback];
     self.state = EZAudioPlayerStatePlaying;
 }
@@ -353,6 +361,9 @@ NSString * const EZAudioPlayerDidSeekNotification = @"EZAudioPlayerDidSeekNotifi
 
 - (void)pause
 {
+    if (!self.audioFile) {
+        return;
+    }
     [self.output stopPlayback];
     self.state = EZAudioPlayerStatePaused;
 }
@@ -361,6 +372,9 @@ NSString * const EZAudioPlayerDidSeekNotification = @"EZAudioPlayerDidSeekNotifi
 
 - (void)seekToFrame:(SInt64)frame
 {
+    if (!self.audioFile) {
+        return;
+    }
     self.state = EZAudioPlayerStateSeeking;
     [self.audioFile seekToFrame:frame];
     self.state = self.isPlaying ? EZAudioPlayerStatePlaying : EZAudioPlayerStatePaused;

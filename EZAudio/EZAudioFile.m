@@ -289,8 +289,12 @@ typedef struct
                                                           &propSize,
                                                           &self.info->frames)
                         operation:"Failed to get total frames"];
-    self.info->duration = (NSTimeInterval) self.info->frames / self.info->fileFormat.mSampleRate;
     
+    if (self.info->frames <= 0) {
+        return NO;
+    }
+    
+    self.info->duration = (NSTimeInterval) self.info->frames / self.info->fileFormat.mSampleRate;
     return YES;
 }
 
