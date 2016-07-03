@@ -202,11 +202,22 @@ UInt32 const EZAudioPlotDefaultMaxHistoryBufferLength = 8192;
 
 - (void)setShouldOptimizeForRealtimePlot:(BOOL)shouldOptimizeForRealtimePlot
 {
-    _shouldOptimizeForRealtimePlot = shouldOptimizeForRealtimePlot;
-    if (shouldOptimizeForRealtimePlot && !self.displayLink)
+    if (_shouldOptimizeForRealtimePlot == shouldOptimizeForRealtimePlot)
     {
-        self.displayLink = [EZAudioDisplayLink displayLinkWithDelegate:self];
-        [self.displayLink start];
+        return;
+    }
+    else
+    {
+        _shouldOptimizeForRealtimePlot = shouldOptimizeForRealtimePlot;
+    }
+    
+    if (_shouldOptimizeForRealtimePlot)
+    {
+        if (!self.displayLink)
+        {
+            self.displayLink = [EZAudioDisplayLink displayLinkWithDelegate:self];
+            [self.displayLink start];
+        }
     }
     else
     {
@@ -324,16 +335,19 @@ UInt32 const EZAudioPlotDefaultMaxHistoryBufferLength = 8192;
     switch (self.plotType)
     {
         case EZPlotTypeBuffer:
-            [self setSampleData:buffer
-                         length:bufferSize];
+        {
+            [self setSampleData:buffer length:bufferSize];
             break;
+        }
         case EZPlotTypeRolling:
-            
-            [self setSampleData:self.historyInfo->buffer
-                         length:self.historyInfo->bufferSize];
+        {
+            [self setSampleData:self.historyInfo->buffer length:self.historyInfo->bufferSize];
             break;
+        }
         default:
+        {
             break;
+        }
     }
     
     // update drawing
