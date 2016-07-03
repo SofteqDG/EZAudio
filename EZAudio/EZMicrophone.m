@@ -485,8 +485,13 @@ static OSStatus EZAudioMicrophoneCallback(void                       *inRefCon,
         return;
     }
     
-    NSError *error;
-    [[AVAudioSession sharedInstance] setPreferredInput:device.port error:&error];
+    NSError *error = nil;
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    if ([audioSession respondsToSelector:@selector(setPreferredInput:)])
+    {
+        [audioSession setPreferredInput:device.port error:&error];
+    }
+    
     if (error)
     {
         NSLog(@"Error setting input device port (%@), reason: %@",
@@ -497,7 +502,7 @@ static OSStatus EZAudioMicrophoneCallback(void                       *inRefCon,
     {
         if (device.dataSource)
         {
-            [[AVAudioSession sharedInstance] setInputDataSource:device.dataSource error:&error];
+            [audioSession setInputDataSource:device.dataSource error:&error];
             if (error)
             {
                 NSLog(@"Error setting input data source (%@), reason: %@",
